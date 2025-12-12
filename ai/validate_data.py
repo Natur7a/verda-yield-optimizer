@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import os
 import sys
+import traceback
 
 
 class DataValidator:
@@ -319,9 +320,20 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     data_path = os.path.join(script_dir, "data", "training_data.csv")
     
-    # Allow custom path from command line
+    # Allow custom path from command line with basic validation
     if len(sys.argv) > 1:
-        data_path = sys.argv[1]
+        user_path = sys.argv[1]
+        # Basic path validation to prevent path traversal
+        if '..' in user_path or user_path.startswith('/'):
+            # Only allow relative paths without parent directory references
+            print("Error: Invalid path. Only relative paths without '..' are allowed.")
+            sys.exit(1)
+        # Resolve to absolute path within script directory
+        data_path = os.path.abspath(os.path.join(script_dir, user_path))
+        # Ensure the path is within the allowed directory
+        if not data_path.startswith(script_dir):
+            print("Error: Path must be within the project directory.")
+            sys.exit(1)
     
     # Create validator and run checks
     validator = DataValidator(data_path)
@@ -335,7 +347,6 @@ def main():
         
     except Exception as e:
         print(f"\n❌ Error during validation: {e}")
-        import traceback
         traceback.print_exc()
         sys.exit(1)
 

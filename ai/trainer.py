@@ -28,7 +28,7 @@ class VerdaTrainer:
         os.makedirs(model_dir, exist_ok=True)
         self.metrics = {}
     
-    def generate_dataset(self, n_samples=5000):
+    def generate_dataset(self, n_samples=5000, random_seed=42):
         """
         Generate realistic synthetic training data based on palm oil industry patterns.
         
@@ -36,6 +36,8 @@ class VerdaTrainer:
         -----------
         n_samples : int
             Number of samples to generate (default: 5000)
+        random_seed : int
+            Random seed for reproducibility (default: 42)
         
         Returns:
         --------
@@ -49,28 +51,29 @@ class VerdaTrainer:
         - Calorific Value (CV): 16-19 MJ/kg (for EFB, fiber, shell)
         - Mill efficiency: 0.75-0.95 (75-95% efficiency)
         """
-        np.random.seed(42)  # For reproducibility
+        # Use local random state to avoid affecting global state
+        rng = np.random.RandomState(random_seed)
         
         # Input Features - Based on actual palm oil mill operations
         # FFB: Fresh Fruit Bunches processed per day (80-150 tons/day)
-        ffb = np.random.uniform(80, 150, n_samples)
+        ffb = rng.uniform(80, 150, n_samples)
         
         # CPO: Crude Palm Oil extraction rate (18-24% of FFB is realistic)
         # Adding slight correlation with mill efficiency
-        base_extraction_rate = np.random.uniform(0.18, 0.24, n_samples)
+        base_extraction_rate = rng.uniform(0.18, 0.24, n_samples)
         
         # Mill efficiency: 75-95% (affects overall output)
-        eff = np.random.uniform(0.75, 0.95, n_samples)
+        eff = rng.uniform(0.75, 0.95, n_samples)
         
         # CPO production = FFB × extraction_rate × efficiency
         cpo = ffb * base_extraction_rate * eff
         
         # Moisture content: 35-45% (typical for palm biomass - EFB, fiber, shell)
-        moisture = np.random.uniform(35, 45, n_samples)
+        moisture = rng.uniform(35, 45, n_samples)
         
         # Calorific Value: 16-19 MJ/kg (for palm biomass)
         # Negatively correlated with moisture (wetter = lower CV)
-        cv = 19 - (moisture - 35) / 10 * 2 + np.random.normal(0, 0.3, n_samples)
+        cv = 19 - (moisture - 35) / 10 * 2 + rng.normal(0, 0.3, n_samples)
         cv = np.clip(cv, 16, 19)
         
         # Derived Outputs
@@ -78,17 +81,17 @@ class VerdaTrainer:
         # EFB: ~22%, Fiber: ~14%, Shell: ~6%, POME: ~0.6-0.8 m³/ton FFB
         biomass_base_rate = 0.23
         # Add slight variation based on efficiency and extraction
-        biomass = ffb * biomass_base_rate * (1 + np.random.uniform(-0.05, 0.05, n_samples))
+        biomass = ffb * biomass_base_rate * (1 + rng.uniform(-0.05, 0.05, n_samples))
         
         # Market Price Modeling - Realistic relationships
         # Oil price index (base factor for biofuel)
-        oil_price = np.random.uniform(60, 120, n_samples)
+        oil_price = rng.uniform(60, 120, n_samples)
         
         # Biofuel demand index (0-1, where 1 is high demand)
-        demand_bio = np.random.uniform(0.3, 0.95, n_samples)
+        demand_bio = rng.uniform(0.3, 0.95, n_samples)
         
         # Carbon tax: $8-$15/ton CO₂ equivalent
-        carbon_tax = np.random.uniform(8, 15, n_samples)
+        carbon_tax = rng.uniform(8, 15, n_samples)
         
         # Biofuel price: Base $85-$120/ton
         # Influenced by oil prices (+0.8 correlation), carbon tax, CV, and demand
@@ -98,41 +101,41 @@ class VerdaTrainer:
             (cv - 16) * 8 +  # Higher CV = higher value
             carbon_tax * 0.3 +  # Carbon tax incentive
             demand_bio * 25 +  # Demand factor
-            np.random.normal(0, 3, n_samples)
+            rng.normal(0, 3, n_samples)
         )
         biofuel_price = np.clip(biofuel_price, 85, 120)
         
         # Animal feed price: Base $45-$75/ton
         # Protein content proxy (derived from processing quality)
-        protein_score = np.random.uniform(0.6, 1.2, n_samples)
+        protein_score = rng.uniform(0.6, 1.2, n_samples)
         
         # Feed demand index
-        demand_feed = np.random.uniform(0.3, 0.9, n_samples)
+        demand_feed = rng.uniform(0.3, 0.9, n_samples)
         
         # Supply factor (market availability)
-        supply_factor = np.random.uniform(0.8, 1.3, n_samples)
+        supply_factor = rng.uniform(0.8, 1.3, n_samples)
         
         feed_price = (
             45 + 
             protein_score * 15 +  # Protein content value
             demand_feed * 20 -  # Demand increase
             (supply_factor - 1) * 10 +  # Oversupply reduces price
-            np.random.normal(0, 2, n_samples)
+            rng.normal(0, 2, n_samples)
         )
         feed_price = np.clip(feed_price, 45, 75)
         
         # Compost price: Base $25-$50/ton
         # Base compost market price
-        compost_base = np.random.uniform(25, 50, n_samples)
+        compost_base = rng.uniform(25, 50, n_samples)
         
         # Nutrient score (quality factor)
-        nutrient_score = np.random.uniform(0.7, 1.3, n_samples)
+        nutrient_score = rng.uniform(0.7, 1.3, n_samples)
         
         compost_price = (
             compost_base * nutrient_score -
             (moisture - 40) * 0.5 +  # Lower moisture = better quality
             carbon_tax * 0.1 +  # Small carbon credit benefit
-            np.random.normal(0, 1.5, n_samples)
+            rng.normal(0, 1.5, n_samples)
         )
         compost_price = np.clip(compost_price, 25, 50)
         
@@ -261,8 +264,13 @@ class VerdaTrainer:
         return filepath
     
     def calculate_mape(self, y_true, y_pred):
-        """Calculate Mean Absolute Percentage Error."""
-        return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+        """
+        Calculate Mean Absolute Percentage Error.
+        
+        Handles zero values by using epsilon to avoid division by zero.
+        """
+        epsilon = 1e-10  # Small value to avoid division by zero
+        return np.mean(np.abs((y_true - y_pred) / (y_true + epsilon))) * 100
     
     def train_model(self, X_train, X_test, y_train, y_test, model, model_name):
         """
