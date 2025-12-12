@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-12T13:08:54.954500",
+  "timestamp": "2025-12-12T21:08:45.940658",
   "dataset_size": 5000,
   "train_test_split": "80/20",
   "models": {
@@ -21,9 +21,9 @@
       "train_mape": "0.14%",
       "test_mape": "0.24%",
       "mape": "0.24%",
-      "train_r2": 0.9363,
-      "test_r2": 0.7791,
-      "r2_score": 0.7791
+      "train_r2": 0.9364,
+      "test_r2": 0.7796,
+      "r2_score": 0.7796
     },
     "feed_price": {
       "train_mae": 0.756,
@@ -41,8 +41,8 @@
       "test_mae": 1.035,
       "mae": 1.035,
       "train_mape": "1.41%",
-      "test_mape": "2.91%",
-      "mape": "2.91%",
+      "test_mape": "2.92%",
+      "mape": "2.92%",
       "train_r2": 0.9928,
       "test_r2": 0.9708,
       "r2_score": 0.9708
