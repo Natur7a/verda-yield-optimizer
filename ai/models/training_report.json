@@ -1,0 +1,88 @@
+{
+  "timestamp": "2025-12-12T13:02:53.699919",
+  "dataset_size": 5000,
+  "train_test_split": "80/20",
+  "models": {
+    "waste_predictor": {
+      "train_mae": 0.335,
+      "test_mae": 0.67,
+      "mae": 0.67,
+      "train_mape": "1.27%",
+      "test_mape": "2.56%",
+      "mape": "2.56%",
+      "train_r2": 0.9927,
+      "test_r2": 0.9715,
+      "r2_score": 0.9715
+    },
+    "biofuel_price": {
+      "train_mae": 0.156,
+      "test_mae": 0.276,
+      "mae": 0.276,
+      "train_mape": "0.14%",
+      "test_mape": "0.24%",
+      "mape": "0.24%",
+      "train_r2": 0.9363,
+      "test_r2": 0.7791,
+      "r2_score": 0.7791
+    },
+    "feed_price": {
+      "train_mae": 0.756,
+      "test_mae": 1.467,
+      "mae": 1.467,
+      "train_mape": "1.10%",
+      "test_mape": "2.15%",
+      "mape": "2.15%",
+      "train_r2": 0.9446,
+      "test_r2": 0.8201,
+      "r2_score": 0.8201
+    },
+    "compost_price": {
+      "train_mae": 0.503,
+      "test_mae": 1.035,
+      "mae": 1.035,
+      "train_mape": "1.41%",
+      "test_mape": "2.91%",
+      "mape": "2.91%",
+      "train_r2": 0.9928,
+      "test_r2": 0.9708,
+      "r2_score": 0.9708
+    },
+    "allocation_classifier": {
+      "train_accuracy": "89.95%",
+      "test_accuracy": "79.60%",
+      "accuracy": "79.60%",
+      "precision": {
+        "0": "0.641",
+        "1": "0.850",
+        "2": "0.822"
+      },
+      "recall": {
+        "0": "0.837",
+        "1": "0.923",
+        "2": "0.636"
+      },
+      "f1_score": {
+        "0": "0.726",
+        "1": "0.885",
+        "2": "0.717"
+      },
+      "confusion_matrix": [
+        [
+          139,
+          0,
+          27
+        ],
+        [
+          7,
+          407,
+          27
+        ],
+        [
+          71,
+          72,
+          250
+        ]
+      ]
+    }
+  }
+}
