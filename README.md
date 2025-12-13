@@ -4,6 +4,48 @@
 
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 
+## VERDA Predictive AI - Palm Oil Waste Optimizer
+
+This application uses machine learning to optimize palm oil mill waste allocation for maximum economic and environmental benefit. It features a FastAPI backend with trained ML models and a React/TypeScript frontend.
+
+## Running the Full Stack
+
+To run the complete application with both backend API and frontend:
+
+### Terminal 1 - Backend API
+
+```bash
+cd ai
+pip install -r requirement.txt
+python trainer.py  # First time only - trains the ML models
+chmod +x start_api.sh
+./start_api.sh
+```
+
+The API will be available at:
+- **Base URL**: http://localhost:8000
+- **Interactive Docs**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+### Terminal 2 - Frontend
+
+```bash
+npm install
+npm run dev
+```
+
+The frontend will be available at http://localhost:8080
+
+### Environment Configuration
+
+Copy `.env.example` to `.env` if you need to customize the API URL:
+
+```bash
+cp .env.example .env
+```
+
+Default configuration works for local development.
+
 ## How can I edit this code?
 
 There are several ways of editing your application.

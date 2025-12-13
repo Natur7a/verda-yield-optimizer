@@ -9,11 +9,23 @@ import { ConfidenceIndicator } from '@/components/dashboard/ConfidenceIndicator'
 import { MillsTable } from '@/components/dashboard/MillsTable';
 import { getKPISummary } from '@/lib/mockData';
 import { Helmet } from 'react-helmet-async';
-import { TrendingUp, DollarSign, Leaf, Zap } from 'lucide-react';
+import { TrendingUp, DollarSign, Leaf, Zap, Brain, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useVerdaPrediction } from '@/hooks/useVerdaPrediction';
+import { createSampleInput } from '@/lib/api';
 
 const Dashboard = () => {
   const kpi = useMemo(() => getKPISummary(), []);
+  const { predict, isLoading, error, result } = useVerdaPrediction();
+
+  const handleRunSamplePrediction = async () => {
+    const sampleInput = createSampleInput();
+    await predict(sampleInput);
+  };
 
   return (
     <>
@@ -83,6 +95,94 @@ const Dashboard = () => {
               <AllocationChart />
               <TradeoffChart />
               <ConfidenceIndicator />
+            </div>
+
+            {/* Live AI Prediction Card */}
+            <div className="mb-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-6 w-6 text-verda-primary" />
+                    <CardTitle>Live AI Prediction</CardTitle>
+                  </div>
+                  <CardDescription>
+                    Run real-time AI predictions using the VERDA machine learning models
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button 
+                    onClick={handleRunSamplePrediction}
+                    disabled={isLoading}
+                    className="w-full sm:w-auto"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="mr-2 h-4 w-4" />
+                        Run Sample Prediction
+                      </>
+                    )}
+                  </Button>
+
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  {result && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                      {/* Biomass Prediction */}
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium text-muted-foreground">
+                          Biomass Waste Prediction
+                        </h4>
+                        <p className="text-3xl font-bold text-foreground">
+                          {result.biomass.toFixed(2)} <span className="text-lg font-normal">tons</span>
+                        </p>
+                      </div>
+
+                      {/* Price Predictions */}
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium text-muted-foreground">
+                          Price Predictions
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm">Biofuel</span>
+                            <span className="font-semibold">${result.prices.biofuel.toFixed(2)}/ton</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm">Animal Feed</span>
+                            <span className="font-semibold">${result.prices.feed.toFixed(2)}/ton</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm">Compost</span>
+                            <span className="font-semibold">${result.prices.compost.toFixed(2)}/ton</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Optimal Allocation */}
+                      <div className="md:col-span-2 pt-2">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                          Recommended Allocation Strategy
+                        </h4>
+                        <Badge 
+                          variant={result.optimal_allocation === 0 ? "default" : result.optimal_allocation === 1 ? "secondary" : "outline"}
+                          className="text-sm py-2 px-4"
+                        >
+                          {result.allocation_description}
+                        </Badge>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
 
             {/* Mills Table */}
