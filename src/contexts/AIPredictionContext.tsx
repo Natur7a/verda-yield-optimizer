@@ -77,9 +77,13 @@ export function AIPredictionProvider({ children }: AIPredictionProviderProps) {
       setLastUpdated(new Date());
       setError(null);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load AI predictions';
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : typeof err === 'string' 
+          ? err 
+          : 'Failed to load AI predictions. Please try again.';
       setError(errorMessage);
-      console.error('Error loading AI predictions:', err);
+      console.error('AI Prediction Error:', err);
       
       // Keep existing data on error (graceful degradation)
       // Only set error state without clearing existing data

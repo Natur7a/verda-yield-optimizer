@@ -14,6 +14,7 @@ import { TrendingUp, DollarSign, Leaf, CheckCircle2 } from 'lucide-react';
 
 const Forecasts = () => {
   const { scenarios, isLoading, error, refreshData, lastUpdated } = useAIPredictionData();
+  const USE_REAL_API = import.meta.env.VITE_USE_REAL_AI === 'true';
 
   return (
     <>
@@ -33,8 +34,8 @@ const Forecasts = () => {
                   <h1 className="font-display text-3xl font-bold text-foreground">
                     Forecasts & Scenarios
                   </h1>
-                  <Badge variant="default" className="bg-green-500/10 text-green-600 border-green-500/20">
-                    🟢 Live AI Data
+                  <Badge variant="default" className={USE_REAL_API ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-blue-500/10 text-blue-600 border-blue-500/20"}>
+                    {USE_REAL_API ? "🟢 Live AI" : "📊 Demo Data"}
                   </Badge>
                 </div>
                 <RefreshButton 

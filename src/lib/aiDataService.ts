@@ -3,6 +3,8 @@
  * 
  * Centralized service for fetching and transforming AI predictions
  * into dashboard-ready data formats with caching support.
+ * 
+ * Features automatic fallback to mock data when API is unavailable.
  */
 
 import { 
@@ -16,6 +18,17 @@ import type {
   AllocationData, 
   OptimizationScenario 
 } from './mockData';
+import {
+  generateYieldForecast,
+  generatePriceForecast,
+  getCurrentAllocation,
+  getOptimizationScenarios,
+  getKPISummary,
+} from './mockData';
+
+// Configuration
+const USE_REAL_API = import.meta.env.VITE_USE_REAL_AI === 'true';
+const API_AVAILABLE = import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== '';
 
 // Cache configuration
 const CACHE_TTL = parseInt(import.meta.env.VITE_PREDICTION_CACHE_TTL || '300000'); // 5 minutes default
@@ -145,6 +158,14 @@ export async function generateAIYieldForecast(): Promise<YieldForecast[]> {
   const cached = cache.get<YieldForecast[]>(cacheKey);
   if (cached) return cached;
 
+  // If not using real API or API not configured, return mock data immediately
+  if (!USE_REAL_API || !API_AVAILABLE) {
+    console.log('[AI Service] Using mock data (VITE_USE_REAL_AI=false or no API URL configured)');
+    const mockData = generateYieldForecast();
+    cache.set(cacheKey, mockData);
+    return mockData;
+  }
+
   try {
     const predictions = await getAIPredictions(30);
     const baseDate = new Date();
@@ -169,8 +190,10 @@ export async function generateAIYieldForecast(): Promise<YieldForecast[]> {
     cache.set(cacheKey, forecast);
     return forecast;
   } catch (error) {
-    console.error('Failed to generate AI yield forecast:', error);
-    throw error;
+    console.warn('[AI Service] API failed, falling back to mock data:', error);
+    const mockData = generateYieldForecast();
+    cache.set(cacheKey, mockData);
+    return mockData;
   }
 }
 
@@ -181,6 +204,14 @@ export async function generateAIPriceForecast(): Promise<PriceForecast[]> {
   const cacheKey = 'price_forecast';
   const cached = cache.get<PriceForecast[]>(cacheKey);
   if (cached) return cached;
+
+  // If not using real API or API not configured, return mock data immediately
+  if (!USE_REAL_API || !API_AVAILABLE) {
+    console.log('[AI Service] Using mock data (VITE_USE_REAL_AI=false or no API URL configured)');
+    const mockData = generatePriceForecast();
+    cache.set(cacheKey, mockData);
+    return mockData;
+  }
 
   try {
     const predictions = await getAIPredictions(30);
@@ -206,8 +237,10 @@ export async function generateAIPriceForecast(): Promise<PriceForecast[]> {
     cache.set(cacheKey, forecast);
     return forecast;
   } catch (error) {
-    console.error('Failed to generate AI price forecast:', error);
-    throw error;
+    console.warn('[AI Service] API failed, falling back to mock data:', error);
+    const mockData = generatePriceForecast();
+    cache.set(cacheKey, mockData);
+    return mockData;
   }
 }
 
@@ -218,6 +251,14 @@ export async function getAIAllocationData(): Promise<AllocationData[]> {
   const cacheKey = 'allocation_data';
   const cached = cache.get<AllocationData[]>(cacheKey);
   if (cached) return cached;
+
+  // If not using real API or API not configured, return mock data immediately
+  if (!USE_REAL_API || !API_AVAILABLE) {
+    console.log('[AI Service] Using mock data (VITE_USE_REAL_AI=false or no API URL configured)');
+    const mockData = getCurrentAllocation();
+    cache.set(cacheKey, mockData);
+    return mockData;
+  }
 
   try {
     // Get latest prediction
@@ -273,8 +314,10 @@ export async function getAIAllocationData(): Promise<AllocationData[]> {
     cache.set(cacheKey, allocationData);
     return allocationData;
   } catch (error) {
-    console.error('Failed to get AI allocation data:', error);
-    throw error;
+    console.warn('[AI Service] API failed, falling back to mock data:', error);
+    const mockData = getCurrentAllocation();
+    cache.set(cacheKey, mockData);
+    return mockData;
   }
 }
 
@@ -285,6 +328,14 @@ export async function getAIOptimizationScenarios(): Promise<OptimizationScenario
   const cacheKey = 'optimization_scenarios';
   const cached = cache.get<OptimizationScenario[]>(cacheKey);
   if (cached) return cached;
+
+  // If not using real API or API not configured, return mock data immediately
+  if (!USE_REAL_API || !API_AVAILABLE) {
+    console.log('[AI Service] Using mock data (VITE_USE_REAL_AI=false or no API URL configured)');
+    const mockData = getOptimizationScenarios();
+    cache.set(cacheKey, mockData);
+    return mockData;
+  }
 
   try {
     // Generate 3 predictions with different market conditions
@@ -359,8 +410,10 @@ export async function getAIOptimizationScenarios(): Promise<OptimizationScenario
     cache.set(cacheKey, scenarios);
     return scenarios;
   } catch (error) {
-    console.error('Failed to generate AI optimization scenarios:', error);
-    throw error;
+    console.warn('[AI Service] API failed, falling back to mock data:', error);
+    const mockData = getOptimizationScenarios();
+    cache.set(cacheKey, mockData);
+    return mockData;
   }
 }
 
@@ -382,6 +435,14 @@ export async function getAIKPISummary(): Promise<KPISummary> {
   const cacheKey = 'kpi_summary';
   const cached = cache.get<KPISummary>(cacheKey);
   if (cached) return cached;
+
+  // If not using real API or API not configured, return mock data immediately
+  if (!USE_REAL_API || !API_AVAILABLE) {
+    console.log('[AI Service] Using mock data (VITE_USE_REAL_AI=false or no API URL configured)');
+    const mockData = getKPISummary();
+    cache.set(cacheKey, mockData);
+    return mockData;
+  }
 
   try {
     // Get latest predictions for trend analysis
@@ -433,8 +494,10 @@ export async function getAIKPISummary(): Promise<KPISummary> {
     cache.set(cacheKey, summary);
     return summary;
   } catch (error) {
-    console.error('Failed to get AI KPI summary:', error);
-    throw error;
+    console.warn('[AI Service] API failed, falling back to mock data:', error);
+    const mockData = getKPISummary();
+    cache.set(cacheKey, mockData);
+    return mockData;
   }
 }
 

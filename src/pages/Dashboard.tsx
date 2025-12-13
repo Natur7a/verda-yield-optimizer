@@ -23,6 +23,8 @@ import { createSampleInput } from '@/lib/api';
 const Dashboard = () => {
   const { kpiSummary, isLoading: aiLoading, error: aiError, refreshData, lastUpdated } = useAIPredictionData();
   const { predict, isLoading, error, result } = useVerdaPrediction();
+  
+  const USE_REAL_API = import.meta.env.VITE_USE_REAL_AI === 'true';
 
   const handleRunSamplePrediction = async () => {
     const sampleInput = createSampleInput();
@@ -47,8 +49,8 @@ const Dashboard = () => {
                   <h1 className="font-display text-3xl font-bold text-foreground">
                     Predictive Dashboard
                   </h1>
-                  <Badge variant="default" className="bg-green-500/10 text-green-600 border-green-500/20">
-                    🟢 Live Data
+                  <Badge variant="default" className={USE_REAL_API ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-blue-500/10 text-blue-600 border-blue-500/20"}>
+                    {USE_REAL_API ? "🟢 Live AI" : "📊 Demo Data"}
                   </Badge>
                 </div>
                 <RefreshButton 

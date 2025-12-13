@@ -115,8 +115,16 @@ async function apiRequest<T>(
 
     // Network or other errors
     if (error instanceof Error) {
+      // Check if it's a network/fetch error
+      if (error.message.includes('fetch') || error.name === 'TypeError') {
+        throw new APIError(
+          'Cannot connect to AI backend. Please ensure the API server is running.',
+          0,
+          { originalError: error }
+        );
+      }
       throw new APIError(
-        `Network error: ${error.message}. Please ensure the API server is running.`,
+        `Network error: ${error.message}`,
         0,
         { originalError: error }
       );
@@ -143,6 +151,26 @@ export async function getPrediction(
  */
 export async function checkHealth(): Promise<HealthResponse> {
   return apiRequest<HealthResponse>('/health');
+}
+
+/**
+ * Check if API is available (with timeout)
+ */
+export async function checkAPIHealth(): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+    
+    const response = await fetch(`${API_URL}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 /**
