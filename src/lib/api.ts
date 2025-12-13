@@ -45,16 +45,14 @@ export interface ModelInfo {
   models: {
     [key: string]: string;
   };
-  metrics?: {
-    [key: string]: any;
-  };
+  metrics?: Record<string, unknown>;
 }
 
 export class APIError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = 'APIError';
