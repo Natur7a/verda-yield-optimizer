@@ -182,6 +182,8 @@ This will:
 
 ## Using the Trained Models
 
+### Python API
+
 ```python
 from verda_ai import VerdaPredictor
 
@@ -214,6 +216,139 @@ result = predictor.predict({
 #   "optimal_allocation": <0, 1, or 2>
 # }
 ```
+
+## API Server
+
+The VERDA AI models are also available via a REST API built with FastAPI.
+
+### Running the API
+
+```bash
+cd ai
+chmod +x start_api.sh
+./start_api.sh
+```
+
+The script will automatically:
+1. Check if models are trained
+2. Train models if needed (runs `trainer.py`)
+3. Start the FastAPI server with hot-reload
+
+The API will be available at:
+- **Base URL**: http://localhost:8000
+- **Interactive Docs (Swagger)**: http://localhost:8000/docs
+- **Alternative Docs (ReDoc)**: http://localhost:8000/redoc
+
+### API Endpoints
+
+#### `GET /`
+Returns API information and available endpoints.
+
+**Response:**
+```json
+{
+  "message": "VERDA AI Prediction API",
+  "version": "1.0.0",
+  "description": "AI-powered palm oil waste allocation optimizer",
+  "endpoints": {
+    "health": "/health",
+    "predict": "/predict",
+    "models_info": "/models/info",
+    "docs": "/docs",
+    "redoc": "/redoc"
+  }
+}
+```
+
+#### `GET /health`
+Health check endpoint to verify API and model status.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "model_loaded": true
+}
+```
+
+#### `POST /predict`
+Main prediction endpoint for waste allocation optimization.
+
+**Request Body:**
+```json
+{
+  "ffb": 120,
+  "cpo": 25,
+  "moisture": 40,
+  "cv": 17,
+  "eff": 0.85,
+  "oil_price": 95,
+  "demand_bio": 0.7,
+  "carbon_tax": 12,
+  "demand_feed": 0.55,
+  "protein_score": 0.9,
+  "supply_factor": 1.1,
+  "compost_base": 30,
+  "nutrient_score": 1.0
+}
+```
+
+**Response:**
+```json
+{
+  "biomass": 27.6,
+  "prices": {
+    "biofuel": 105.2,
+    "feed": 58.3,
+    "compost": 32.1
+  },
+  "optimal_allocation": 0,
+  "allocation_description": "Revenue Maximization (60% Biofuel, 25% Feed, 15% Compost)"
+}
+```
+
+**Validation Ranges:**
+- `ffb`: 80-150 (Fresh Fruit Bunches, tons/day)
+- `cpo`: 14-36 (Crude Palm Oil extraction rate, %)
+- `moisture`: 35-45 (Moisture content, %)
+- `cv`: 16-19 (Calorific Value, MJ/kg)
+- `eff`: 0.75-0.95 (Mill efficiency)
+- `oil_price`: 70-130 (Oil price index)
+- `demand_bio`: 0.4-1.0 (Biofuel demand factor)
+- `carbon_tax`: 8-15 (Carbon tax, $/ton CO₂)
+- `demand_feed`: 0.4-1.0 (Feed demand factor)
+- `protein_score`: 0.7-1.2 (Protein score)
+- `supply_factor`: 0.8-1.3 (Supply factor)
+- `compost_base`: 20-50 (Compost base price)
+- `nutrient_score`: 0.7-1.3 (Nutrient score)
+
+**Allocation Strategies:**
+- **0**: Revenue Maximization (60% Biofuel, 25% Feed, 15% Compost)
+- **1**: Balanced Approach (40% Biofuel, 40% Feed, 20% Compost)
+- **2**: Sustainability Focus (30% Biofuel, 30% Feed, 40% Compost)
+
+#### `GET /models/info`
+Returns model metadata and training information.
+
+**Response:**
+```json
+{
+  "model_name": "VERDA AI Optimizer",
+  "version": "1.0.0",
+  "training_date": "2025-12-13T10:30:00",
+  "models": {
+    "waste_predictor": "Random Forest Regressor",
+    "biofuel_price_predictor": "Random Forest Regressor",
+    "feed_price_predictor": "Random Forest Regressor",
+    "compost_price_predictor": "Random Forest Regressor",
+    "allocation_classifier": "Random Forest Classifier"
+  }
+}
+```
+
+### Using the API from Frontend
+
+See the main README for instructions on running the full stack with both backend API and frontend.
 
 ## References
 
