@@ -55,7 +55,7 @@ export const AllocationChart = () => {
                     borderRadius: '8px',
                     boxShadow: 'var(--shadow-soft)'
                   }}
-                  formatter={(value: number, name: string, props: any) => [
+                  formatter={(value: number, name: string, props: { payload: { revenue: number; emissions: number } }) => [
                     <div key="tooltip" className="space-y-1">
                       <div className="font-medium">{value}%</div>
                       <div className="text-xs text-muted-foreground">

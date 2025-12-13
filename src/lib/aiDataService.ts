@@ -26,7 +26,7 @@ interface CacheEntry<T> {
 }
 
 class PredictionCache {
-  private cache = new Map<string, CacheEntry<any>>();
+  private cache = new Map<string, CacheEntry<unknown>>();
 
   set<T>(key: string, data: T): void {
     this.cache.set(key, {
@@ -367,9 +367,18 @@ export async function getAIOptimizationScenarios(): Promise<OptimizationScenario
 /**
  * Get KPI summary from AI predictions
  */
-export async function getAIKPISummary() {
+export async function getAIKPISummary(): Promise<{
+  totalYield: number;
+  yieldChange: number;
+  totalRevenue: number;
+  revenueChange: number;
+  emissionsReduced: number;
+  emissionsChange: number;
+  efficiency: number;
+  efficiencyChange: number;
+}> {
   const cacheKey = 'kpi_summary';
-  const cached = cache.get<any>(cacheKey);
+  const cached = cache.get<ReturnType<typeof getAIKPISummary>>(cacheKey);
   if (cached) return cached;
 
   try {
