@@ -1,14 +1,8 @@
-"""
-FastAPI application for VERDA AI prediction service.
-
-This API wraps the VerdaPredictor ML models and provides REST endpoints
-for waste allocation optimization predictions.
-"""
-
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator
 from typing import Dict
+from contextlib import asynccontextmanager
 import logging
 from datetime import datetime
 import os
@@ -22,13 +16,44 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Global predictor instance
+predictor = None
+
+# Allocation strategy descriptions
+ALLOCATION_DESCRIPTIONS = {
+    0: "Revenue Maximization (60% Biofuel, 25% Feed, 15% Compost)",
+    1: "Balanced Approach (40% Biofuel, 40% Feed, 20% Compost)",
+    2: "Sustainability Focus (30% Biofuel, 30% Feed, 40% Compost)"
+}
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load ML models on startup and clean up on shutdown."""
+    global predictor
+    try:
+        model_dir = os.path.join(os.path.dirname(__file__), "models")
+        logger.info(f"Loading models from {model_dir}")
+        predictor = VerdaPredictor(model_dir=model_dir)
+        logger.info("Models loaded successfully")
+    except Exception as e:
+        logger.error(f"Failed to load models: {e}")
+        logger.warning("API will start but predictions will fail until models are trained")
+    
+    yield
+    
+    # Cleanup (if needed)
+    logger.info("Shutting down application")
+
+
 # Initialize FastAPI app
 app = FastAPI(
     title="VERDA AI Prediction API",
     description="AI-powered palm oil waste allocation optimizer",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS Configuration
@@ -120,21 +145,6 @@ class ModelInfo(BaseModel):
     version: str
     training_date: str
     models: Dict[str, str]
-
-
-# Startup event
-@app.on_event("startup")
-async def startup_event():
-    """Load ML models on startup."""
-    global predictor
-    try:
-        model_dir = os.path.join(os.path.dirname(__file__), "models")
-        logger.info(f"Loading models from {model_dir}")
-        predictor = VerdaPredictor(model_dir=model_dir)
-        logger.info("Models loaded successfully")
-    except Exception as e:
-        logger.error(f"Failed to load models: {e}")
-        logger.warning("API will start but predictions will fail until models are trained")
 
 
 # Middleware for request logging

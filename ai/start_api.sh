@@ -21,7 +21,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
 # Check if models directory exists and has model files
-if [ ! -d "models" ] || [ -z "$(ls -A models/*.pkl 2>/dev/null)" ]; then
+if [ ! -d "models" ] || [ ! -f "models/waste.pkl" ]; then
     echo -e "${YELLOW}⚠ Models not found!${NC}"
     echo -e "${YELLOW}Training models first...${NC}"
     echo ""
