@@ -12,13 +12,11 @@ import {
   type PredictionInput, 
   type PredictionResult 
 } from './api';
-import type { 
-  YieldForecast, 
-  PriceForecast, 
-  AllocationData, 
-  OptimizationScenario 
-} from './mockData';
-import {
+import { 
+  type YieldForecast, 
+  type PriceForecast, 
+  type AllocationData, 
+  type OptimizationScenario,
   generateYieldForecast,
   generatePriceForecast,
   getCurrentAllocation,
@@ -28,7 +26,7 @@ import {
 
 // Configuration
 const USE_REAL_API = import.meta.env.VITE_USE_REAL_AI === 'true';
-const API_AVAILABLE = import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== '';
+const API_AVAILABLE = import.meta.env.VITE_API_URL?.trim() !== undefined && import.meta.env.VITE_API_URL?.trim() !== '';
 
 // Cache configuration
 const CACHE_TTL = parseInt(import.meta.env.VITE_PREDICTION_CACHE_TTL || '300000'); // 5 minutes default

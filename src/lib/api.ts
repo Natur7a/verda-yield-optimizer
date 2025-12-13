@@ -158,8 +158,9 @@ export async function checkHealth(): Promise<HealthResponse> {
  */
 export async function checkAPIHealth(): Promise<boolean> {
   try {
+    const timeout = parseInt(import.meta.env.VITE_API_TIMEOUT || '5000');
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
     
     const response = await fetch(`${API_URL}/health`, {
       method: 'GET',
