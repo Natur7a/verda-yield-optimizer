@@ -364,10 +364,7 @@ export async function getAIOptimizationScenarios(): Promise<OptimizationScenario
   }
 }
 
-/**
- * Get KPI summary from AI predictions
- */
-export async function getAIKPISummary(): Promise<{
+export interface KPISummary {
   totalYield: number;
   yieldChange: number;
   totalRevenue: number;
@@ -376,9 +373,14 @@ export async function getAIKPISummary(): Promise<{
   emissionsChange: number;
   efficiency: number;
   efficiencyChange: number;
-}> {
+}
+
+/**
+ * Get KPI summary from AI predictions
+ */
+export async function getAIKPISummary(): Promise<KPISummary> {
   const cacheKey = 'kpi_summary';
-  const cached = cache.get<ReturnType<typeof getAIKPISummary>>(cacheKey);
+  const cached = cache.get<KPISummary>(cacheKey);
   if (cached) return cached;
 
   try {

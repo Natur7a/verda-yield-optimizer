@@ -15,18 +15,8 @@ import {
   getAIOptimizationScenarios,
   getAIKPISummary,
   clearCache,
+  type KPISummary,
 } from '@/lib/aiDataService';
-
-interface KPISummary {
-  totalYield: number;
-  yieldChange: number;
-  totalRevenue: number;
-  revenueChange: number;
-  emissionsReduced: number;
-  emissionsChange: number;
-  efficiency: number;
-  efficiencyChange: number;
-}
 
 interface AIPredictionContextType {
   yieldForecast: YieldForecast[];

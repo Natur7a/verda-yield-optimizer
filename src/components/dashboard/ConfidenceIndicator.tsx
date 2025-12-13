@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAIPredictionData } from '@/contexts/AIPredictionContext';
 import { TrendingUp, DollarSign, PieChart } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export const ConfidenceIndicator = () => {
   const { isLoading } = useAIPredictionData();
@@ -61,12 +61,12 @@ export const ConfidenceIndicator = () => {
                     </div>
                     <span className="text-sm font-semibold text-foreground">{indicator.value}%</span>
                   </div>
-                  <Progress 
-                    value={indicator.value} 
-                    className="h-2"
-                    // @ts-expect-error - custom indicator color
-                    indicatorClassName={indicator.color}
-                  />
+                  <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary">
+                    <div
+                      className={cn("h-full transition-all", indicator.color)}
+                      style={{ width: `${indicator.value}%` }}
+                    />
+                  </div>
                 </div>
               );
             })}

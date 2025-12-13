@@ -3,6 +3,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { useAIPredictionData } from '@/contexts/AIPredictionContext';
 
+interface TooltipPayload {
+  payload: {
+    revenue: number;
+    emissions: number;
+  };
+}
+
 export const AllocationChart = () => {
   const { allocationData, isLoading } = useAIPredictionData();
 
@@ -55,7 +62,7 @@ export const AllocationChart = () => {
                     borderRadius: '8px',
                     boxShadow: 'var(--shadow-soft)'
                   }}
-                  formatter={(value: number, name: string, props: { payload: { revenue: number; emissions: number } }) => [
+                  formatter={(value: number, name: string, props: TooltipPayload) => [
                     <div key="tooltip" className="space-y-1">
                       <div className="font-medium">{value}%</div>
                       <div className="text-xs text-muted-foreground">
