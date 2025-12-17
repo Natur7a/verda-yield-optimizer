@@ -9,27 +9,22 @@ import { ConfidenceIndicator } from '@/components/dashboard/ConfidenceIndicator'
 import { MillsTable } from '@/components/dashboard/MillsTable';
 import { RefreshButton } from '@/components/dashboard/RefreshButton';
 import { ErrorState } from '@/components/dashboard/ErrorState';
+import { PredictionInputForm } from '@/components/dashboard/PredictionInputForm';
 import { useAIPredictionData } from '@/contexts/AIPredictionContext';
 import { Helmet } from 'react-helmet-async';
-import { TrendingUp, DollarSign, Leaf, Zap, Brain, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { TrendingUp, DollarSign, Leaf, Zap } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useVerdaPrediction } from '@/hooks/useVerdaPrediction';
-import { createSampleInput } from '@/lib/api';
+import { defaultValues } from '@/lib/predictionPresets';
 
 const Dashboard = () => {
   const { kpiSummary, isLoading: aiLoading, error: aiError, refreshData, lastUpdated } = useAIPredictionData();
   const { predict, isLoading, error, result } = useVerdaPrediction();
   
   const USE_REAL_API = import.meta.env.VITE_USE_REAL_AI === 'true';
-
-  const handleRunSamplePrediction = async () => {
-    const sampleInput = createSampleInput();
-    await predict(sampleInput);
-  };
 
   return (
     <>
@@ -140,45 +135,29 @@ const Dashboard = () => {
               <ConfidenceIndicator />
             </div>
 
-            {/* Live AI Prediction Card */}
+            {/* Live AI Prediction Form */}
             <div className="mb-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-6 w-6 text-verda-primary" />
-                    <CardTitle>Live AI Prediction</CardTitle>
-                  </div>
-                  <CardDescription>
-                    Run real-time AI predictions using the VERDA machine learning models
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button 
-                    onClick={handleRunSamplePrediction}
-                    disabled={isLoading}
-                    className="w-full sm:w-auto"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Analyzing...
-                      </>
-                    ) : (
-                      <>
-                        <Brain className="mr-2 h-4 w-4" />
-                        Run Sample Prediction
-                      </>
-                    )}
-                  </Button>
+              <PredictionInputForm 
+                onSubmit={predict}
+                isLoading={isLoading}
+                initialValues={defaultValues}
+              />
 
-                  {error && (
+              {/* Prediction Results */}
+              {error && (
+                <Card className="mt-6">
+                  <CardContent className="pt-6">
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
-                  )}
+                  </CardContent>
+                </Card>
+              )}
 
-                  {result && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+              {result && (
+                <Card className="mt-6">
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Biomass Prediction */}
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-muted-foreground">
@@ -223,9 +202,9 @@ const Dashboard = () => {
                         </Badge>
                       </div>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
             </div>
 
             {/* Mills Table */}
