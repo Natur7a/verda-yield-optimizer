@@ -13,7 +13,7 @@ import { PredictionInputForm } from '@/components/dashboard/PredictionInputForm'
 import { useAIPredictionData } from '@/contexts/AIPredictionContext';
 import { Helmet } from 'react-helmet-async';
 import { TrendingUp, DollarSign, Leaf, Zap } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
