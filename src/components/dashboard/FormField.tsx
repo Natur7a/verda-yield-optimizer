@@ -89,7 +89,7 @@ export function FormField({
             className={cn(
               'w-28 text-right',
               hasError && 'border-destructive focus-visible:ring-destructive',
-              isValid && 'border-green-500 focus-visible:ring-green-500'
+              isValid && 'border-verda-mint focus-visible:ring-verda-mint'
             )}
           />
           {unit && (

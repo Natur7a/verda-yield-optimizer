@@ -202,7 +202,8 @@ export function validateField(
   if (!rule) return null;
 
   if (value < rule.min || value > rule.max) {
-    return `Must be between ${rule.min} and ${rule.max}${rule.unit ? ' ' + rule.unit : ''}`;
+    const unit = rule.unit ? ` ${rule.unit}` : '';
+    return `Must be between ${rule.min} and ${rule.max}${unit}`;
   }
 
   return null;

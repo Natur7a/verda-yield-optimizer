@@ -5,7 +5,7 @@
  * with validation, presets, and responsive tabs layout
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Brain, RotateCcw, Beaker, TrendingUp, Leaf, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -73,7 +73,7 @@ export function PredictionInputForm({
     }
   };
 
-  const isValid = Object.keys(errors).length === 0;
+  const isValid = useMemo(() => Object.keys(errors).length === 0, [errors]);
 
   return (
     <Card>
