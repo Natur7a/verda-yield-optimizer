@@ -263,15 +263,11 @@ export async function getAIAllocationData(): Promise<AllocationData[]> {
     const predictions = await getAIPredictions(1);
     const prediction = predictions[0];
 
-    // Get allocation percentages based on optimal allocation strategy
-    // Allocation 0 = Max Revenue (high biofuel)
-    // Allocation 1 = Balanced
-    // Allocation 2 = Sustainability (high compost & carbon credits)
     
-    const allocationMap: Record<number, { biofuel: number; feed: number; compost: number; carbon: number }> = {
-      0: { biofuel: 55, feed: 25, compost: 12, carbon: 8 },   // Max Revenue
-      1: { biofuel: 35, feed: 28, compost: 22, carbon: 15 },  // Balanced
-      2: { biofuel: 20, feed: 15, compost: 35, carbon: 30 },  // Sustainability
+    const allocationMap: Record<number, { biofuel: number; feed: number; compost: number }> = {
+      0: { biofuel: 60, feed: 25, compost: 15 },   // Max Revenue
+      1: { biofuel: 40, feed: 40, compost: 20 },  // Balanced
+      2: { biofuel: 30, feed: 30, compost: 40 },  // Sustainability
     };
 
     const allocation = allocationMap[prediction.optimal_allocation] || allocationMap[1];
@@ -299,13 +295,6 @@ export async function getAIAllocationData(): Promise<AllocationData[]> {
         revenue: Math.round(prediction.prices.compost * biomass * (allocation.compost / 100)),
         emissions: -Math.round(biomass * (allocation.compost / 100) * 0.4), // 0.4 tons CO2/ton
         color: 'hsl(var(--chart-3))',
-      },
-      {
-        category: 'Carbon Credits',
-        value: allocation.carbon,
-        revenue: Math.round(40 * biomass * (allocation.carbon / 100)), // $40/ton for carbon credits
-        emissions: -Math.round(biomass * (allocation.carbon / 100) * 0.6), // 0.6 tons CO2/ton
-        color: 'hsl(var(--chart-4))',
       },
     ];
 
