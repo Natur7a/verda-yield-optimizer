@@ -115,7 +115,7 @@ This project is built with:
 
 
 ## Team
-Moses Handoyo - 2802418834
-Kenneth Sean Ternadi - 2802422245
-Nicholas Anthony Cahyadi - 2802429535
-Stefanus Severiano Tandjungan - 2802403630
+- Moses Handoyo - 2802418834
+- Kenneth Sean Ternadi - 2802422245
+- Nicholas Anthony Cahyadi - 2802429535
+- Stefanus Severiano Tandjungan - 2802403630
