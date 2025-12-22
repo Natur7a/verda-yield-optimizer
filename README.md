@@ -1,12 +1,6 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
-
 ## VERDA Predictive AI - Palm Oil Waste Optimizer
 
-This application uses machine learning to optimize palm oil mill waste allocation for maximum economic and environmental benefit. It features a FastAPI backend with trained ML models and a React/TypeScript frontend.
+VERDA is a full-stack machine learning application designed to optimize palm oil mill waste allocation for maximum economic value and environmental sustainability.
 
 ## Running the Full Stack
 
@@ -18,9 +12,22 @@ To run the complete application with both backend API and frontend:
 cd ai
 pip install -r requirement.txt
 python trainer.py  # First time only - trains the ML models
+```
+**Make sure Python version is 3.9 or higher**
+
+For Running the API Server
+
+For MacOS/Linux
+```bash
 chmod +x start_api.sh
 ./start_api.sh
 ```
+
+For Windows
+```bash
+uvicorn api:app --reload --port 8000 
+```
+
 
 The API will be available at:
 - **Base URL**: http://localhost:8000
@@ -29,8 +36,23 @@ The API will be available at:
 
 ### Terminal 2 - Frontend
 
+
+1. Install Dependencies
 ```bash
 npm install
+```
+
+2. Env Setup
+```bash
+cp .env.example .env
+```
+**Make sure the variable is set to:**
+```bash
+VITE_USE_REAL_AI=true
+```
+
+3. Starting the Frontend
+```bash
 npm run dev
 ```
 
@@ -38,25 +60,14 @@ The frontend will be available at http://localhost:8080
 
 ### Environment Configuration
 
-Copy `.env.example` to `.env` if you need to customize the API URL:
-
-```bash
-cp .env.example .env
-```
-
-Default configuration works for local development.
+The default .env.example configuration works for local development.
+You may edit .env to customize API URLs or feature flags if needed.
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
+**Use your preferred IDE (Recommended)**
 
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
@@ -102,14 +113,9 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Team
+Moses Handoyo - 2802418834
+Kenneth Sean Ternadi - 2802422245
+Nicholas Anthony Cahyadi - 2802429535
+Stefanus Severiano Tandjungan - 2802403630
